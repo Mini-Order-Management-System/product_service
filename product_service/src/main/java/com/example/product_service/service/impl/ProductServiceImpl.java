@@ -26,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductById(String productId) {
         log.debug("Fetching product with ID: {}", productId);
         return productRepository.findById(productId)
-                .orElseThrow(() -> new NoSuchElementException("Product not found: " + productId));
+                .orElseThrow(() -> new NoSuchElementException("Product not found with ID: " + productId));
     }
 
     @Override
@@ -34,8 +34,7 @@ public class ProductServiceImpl implements ProductService {
         log.debug("Checking stock availability for {} products.", requests.size());
         List<ProductStockCheckResponse> responses = new ArrayList<>();
         for (ProductStockCheckRequest req : requests) {
-            Product product = productRepository.findById(req.getProductId())
-                    .orElseThrow(() -> new NoSuchElementException("Product not found: " + req.getProductId()));
+            Product product = this.getProductById(req.getProductId());
             boolean sufficient = product.getStockQuantity() >= req.getQuantity();
             responses.add(new ProductStockCheckResponse(req.getProductId(), sufficient));
         }
@@ -48,9 +47,7 @@ public class ProductServiceImpl implements ProductService {
     public void updateStock(List<ProductStockUpdateRequest> requests) {
         log.debug("Updating stock for {} products.", requests.size());
         for (ProductStockUpdateRequest req : requests) {
-            Product product = productRepository.findById(req.getProductId())
-                    .orElseThrow(() -> new NoSuchElementException("Product not found: " + req.getProductId()));
-
+            Product product = this.getProductById(req.getProductId());
             int beforeUpdateStock = product.getStockQuantity();
             int newQuantity = product.getStockQuantity() + req.getQuantityChange();
             if (newQuantity < 0) {
