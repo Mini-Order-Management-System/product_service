@@ -1,0 +1,27 @@
+
+services:
+  product-service:
+    build:
+      context: .  # Đường dẫn đến Dockerfile của Product Service
+      dockerfile: Dockerfile
+    image: product-service-image:latest
+    networks:
+      - my-app-network
+    ports:
+      - "8080:8080"  # Mapping port từ container ra ngoài host
+
+  order-service:
+    build:
+      context: ./order-service  # Đường dẫn đến Dockerfile của Order Service
+      dockerfile: Dockerfile
+    image: order-service-image:latest
+    networks:
+      - my-app-network
+    ports:
+      - "8081:8081"  # Mapping port từ container ra ngoài host
+    depends_on:
+      - product-service  # Đảm bảo rằng Product Service được khởi động trước khi Order Service chạy
+
+networks:
+  my-app-network:
+    driver: bridge
