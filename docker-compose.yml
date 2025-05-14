@@ -12,7 +12,7 @@ services:
 
   order-service:
     build:
-      context: ./order-service  # Đường dẫn đến Dockerfile của Order Service
+      context: ../order_service  # Đường dẫn đến Dockerfile của Order Service
       dockerfile: Dockerfile
     image: order-service-image:latest
     networks:
